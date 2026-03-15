@@ -10,6 +10,8 @@
 /** Supported command verbs. */
 export const VERBS = ['show', 'hide', 'zoom', 'focus', 'filter', 'style', 'inspect', 'remove'];
 
+const TARGET_VERBS = new Set(['zoom', 'focus']);
+
 /** Optional natural-language filler words accepted after each verb. */
 const FILLERS_BY_VERB = {
   show: new Set(['the', 'all']),
@@ -23,18 +25,22 @@ const FILLERS_BY_VERB = {
 };
 
 /**
- * Parse a command string into a structured action object.
+ * Parse a command string into a structured command object.
  *
  * @param {string} input - Raw command string, e.g. "show roads" or "zoom tokyo"
- * @returns {{ verb: string, noun: string|null, args: string[], raw: string }
+ * @returns {{ verb: string, objects: string[], raw: string }
+ *           |{ verb: string, target: string|null, raw: string }
  *           |{ error: string, raw: string }}
  *
  * @example
  * parseCommand('show roads')
- * // => { verb: 'show', noun: 'roads', args: [], raw: 'show roads' }
+ * // => { verb: 'show', objects: ['roads'], raw: 'show roads' }
  *
- * parseCommand('zoom sapporo 12')
- * // => { verb: 'zoom', noun: 'sapporo', args: ['12'], raw: 'zoom sapporo 12' }
+ * parseCommand('show roads and buildings')
+ * // => { verb: 'show', objects: ['roads', 'buildings'], raw: 'show roads and buildings' }
+ *
+ * parseCommand('zoom to sapporo')
+ * // => { verb: 'zoom', target: 'sapporo', raw: 'zoom to sapporo' }
  */
 export function parseCommand(input) {
   const raw = input;
@@ -55,14 +61,27 @@ export function parseCommand(input) {
 
   const phrase = tokens.slice(1);
   const fillers = FILLERS_BY_VERB[verb] || new Set();
-  let start = 0;
 
-  while (start < phrase.length && fillers.has(phrase[start])) {
-    start += 1;
+  if (TARGET_VERBS.has(verb)) {
+    let start = 0;
+
+    while (start < phrase.length && fillers.has(phrase[start])) {
+      start += 1;
+    }
+
+    return {
+      verb,
+      target: phrase.slice(start).join(' ') || null,
+      raw
+    };
   }
 
-  const noun = phrase[start] || null;
-  const args = phrase.slice(start + 1);
+  const objects = phrase
+    .filter(token => !fillers.has(token))
+    .join(' ')
+    .split(/\band\b/g)
+    .map(token => token.trim())
+    .filter(Boolean);
 
-  return { verb, noun, args, raw };
+  return { verb, objects, raw };
 }
