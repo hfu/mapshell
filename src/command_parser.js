@@ -1,10 +1,11 @@
 /**
  * Mapshell Command Parser
- * Parses shell-style commands into structured action objects.
+ * Parses shell-style commands into structured command objects.
  *
  * Grammar:
- *   command ::= verb [filler...] [noun] [args...]
- *   filler  ::= "the" | "all" | "to"
+ *   command ::= object-command | target-command
+ *   object-command ::= verb [filler...] object ("and" object)*
+ *   target-command ::= ("zoom" | "focus") ["to"] target
  */
 
 /** Supported command verbs. */
