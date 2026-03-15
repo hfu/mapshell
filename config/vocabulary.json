@@ -1,0 +1,50 @@
+{
+  "roads": {
+    "category": "transport",
+    "description": "Road network including motorways, primary, secondary, and local roads"
+  },
+  "railways": {
+    "category": "transport",
+    "description": "Railway lines and transit corridors"
+  },
+  "airports": {
+    "category": "transport",
+    "description": "Airport runways, taxiways, and aprons"
+  },
+  "buildings": {
+    "category": "built",
+    "description": "Building footprints"
+  },
+  "waterways": {
+    "category": "water",
+    "description": "Rivers, streams, and canals"
+  },
+  "inlandwater": {
+    "category": "water",
+    "description": "Lakes, reservoirs, and ponds"
+  },
+  "coastline": {
+    "category": "water",
+    "description": "Coastal boundary between land and sea"
+  },
+  "ocean": {
+    "category": "water",
+    "description": "Ocean and sea areas"
+  },
+  "elevation": {
+    "category": "terrain",
+    "description": "Hillshade and elevation raster"
+  },
+  "contours": {
+    "category": "terrain",
+    "description": "Elevation contour lines"
+  },
+  "landuse": {
+    "category": "land",
+    "description": "Land use and land cover polygons"
+  },
+  "pois": {
+    "category": "places",
+    "description": "Points of interest"
+  }
+}

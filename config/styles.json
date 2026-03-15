@@ -1,0 +1,94 @@
+{
+  "_note": "Default paint and layout properties used when adding new layers via the action engine.",
+  "roads": {
+    "type": "line",
+    "paint": {
+      "line-color": "#888888",
+      "line-width": ["interpolate", ["linear"], ["zoom"], 4, 0.5, 10, 1.5, 14, 3]
+    },
+    "layout": {
+      "line-cap": "round",
+      "line-join": "round"
+    }
+  },
+  "railways": {
+    "type": "line",
+    "paint": {
+      "line-color": "#444444",
+      "line-width": 1.5,
+      "line-dasharray": [4, 2]
+    }
+  },
+  "airports": {
+    "type": "fill",
+    "paint": {
+      "fill-color": "#d4e8f7",
+      "fill-opacity": 0.8
+    }
+  },
+  "buildings": {
+    "type": "fill",
+    "paint": {
+      "fill-color": "#d4d4d4",
+      "fill-opacity": 0.8,
+      "fill-outline-color": "#aaaaaa"
+    }
+  },
+  "waterways": {
+    "type": "line",
+    "paint": {
+      "line-color": "#4a90d9",
+      "line-width": ["interpolate", ["linear"], ["zoom"], 8, 0.5, 14, 3]
+    }
+  },
+  "inlandwater": {
+    "type": "fill",
+    "paint": {
+      "fill-color": "#aad3df",
+      "fill-opacity": 0.9
+    }
+  },
+  "coastline": {
+    "type": "line",
+    "paint": {
+      "line-color": "#4a90d9",
+      "line-width": 1
+    }
+  },
+  "ocean": {
+    "type": "fill",
+    "paint": {
+      "fill-color": "#aad3df"
+    }
+  },
+  "elevation": {
+    "type": "raster",
+    "paint": {
+      "raster-opacity": 0.6
+    }
+  },
+  "contours": {
+    "type": "line",
+    "paint": {
+      "line-color": "#996633",
+      "line-width": 0.5,
+      "line-opacity": 0.6
+    }
+  },
+  "landuse": {
+    "type": "fill",
+    "paint": {
+      "fill-color": "#e0edcc",
+      "fill-opacity": 0.5
+    }
+  },
+  "pois": {
+    "type": "circle",
+    "paint": {
+      "circle-color": "#e05c1e",
+      "circle-radius": 4,
+      "circle-stroke-color": "#ffffff",
+      "circle-stroke-width": 1
+    }
+  }
+}

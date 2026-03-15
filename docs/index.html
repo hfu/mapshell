@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mapshell</title>
+
+  <!-- MapLibre GL JS -->
+  <link href="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div id="app">
+    <div id="map"></div>
+
+    <div id="shell">
+      <div id="log" role="log" aria-live="polite" aria-label="Command log"></div>
+
+      <div id="input-row">
+        <span id="prompt" aria-hidden="true">&#x276F;</span>
+        <input
+          id="cmd"
+          type="text"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          placeholder="try: show roads · hide buildings · zoom tokyo"
+          aria-label="Map command input"
+        />
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>
