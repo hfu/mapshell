@@ -12,6 +12,8 @@ inspect waterways
 
 → **[Live demo](https://hfu.github.io/mapshell/docs/)**
 
+Current demo status: the GitHub Pages page is a single self-contained HTML file that renders a placeholder MapLibre demo map and logs submitted commands. Parser and action-engine integration into the demo remain future work.
+
 ---
 
 ## Project structure
@@ -30,9 +32,7 @@ mapshell/
 │   ├── action_engine.js     # ActionEngine – execute actions on a MapLibre map
 │   └── map.js               # initMap(container, options) – create a map
 └── docs/
-    ├── index.html        # Demo page (GitHub Pages)
-    ├── main.js           # Self-contained demo logic (no build step)
-    └── style.css         # Demo styles
+    └── index.html        # Self-contained demo page (GitHub Pages)
 ```
 
 ---
@@ -53,7 +53,7 @@ Then open `http://localhost:8080/docs/` in your browser.
 
 ---
 
-## Command reference
+## Planned command reference
 
 | Verb      | Example                   | Description                            |
 |-----------|---------------------------|----------------------------------------|
@@ -84,7 +84,7 @@ Canonical geographic terms (plural nouns):
 - **Simplicity first** – minimal vocabulary, minimal code
 - **Command-driven interaction** – all map state changes via commands
 - **JSON configuration** – vocabulary and datasets are data, not code
-- **No build step** – plain ES modules, no bundler required
+- **No build step** – a single self-contained HTML demo, no bundler required
 - **No heavy frameworks** – vanilla JavaScript only
 
 ---
@@ -94,7 +94,7 @@ Canonical geographic terms (plural nouns):
 The demo uses the free [OpenFreeMap](https://openfreemap.org/) Liberty style.
 To use a different tile source (e.g. Protomaps, MapTiler, a local Martin server),
 update `config/datasets.json` with your source's layer patterns and change the
-style URL in `docs/main.js`.
+style URL in `docs/index.html`.
 
 ---
 
