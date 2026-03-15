@@ -98,9 +98,7 @@ export class ActionEngine {
       return { ok: false, message: 'show requires a noun — e.g. "show roads"' };
     }
     const dataset = this._getDataset(term);
-    if (!dataset) return dataset === undefined
-      ? { ok: false, message: this._unknownTermMsg(term) }
-      : { ok: false, message: this._unknownTermMsg(term) };
+    if (!dataset) return { ok: false, message: this._unknownTermMsg(term) };
 
     const layers = this._findLayers(dataset.layerPatterns);
     if (layers.length === 0) {

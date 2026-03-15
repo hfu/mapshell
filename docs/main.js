@@ -151,8 +151,8 @@ function executeAction(map, action) {
     }
     const visibility = (verb === 'show') ? 'visible' : 'none';
     layers.forEach(id => map.setLayoutProperty(id, 'visibility', visibility));
-    const action_ = verb === 'show' ? 'Showing' : 'Hiding';
-    return { ok: true, message: `${action_} ${noun} (${layers.length} layer${layers.length !== 1 ? 's' : ''})` };
+    const displayAction = verb === 'show' ? 'Showing' : 'Hiding';
+    return { ok: true, message: `${displayAction} ${noun} (${layers.length} layer${layers.length !== 1 ? 's' : ''})` };
   }
 
   // ── zoom / focus ──────────────────────────────────────────────────────────
