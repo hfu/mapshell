@@ -12,7 +12,7 @@ inspect waterways
 
 → **[Live demo](https://hfu.github.io/mapshell/docs/)**
 
-Current demo status: the GitHub Pages page is built with Vite as a single self-contained `docs/index.html` runtime using MapLibre GL JS, Protomaps basemaps, and PMTiles-backed terrain. Parser and action-engine integration into the runtime remain future work.
+Current demo status: the GitHub Pages page is built with Vite as a single self-contained `docs/index.html` runtime using MapLibre GL JS, Protomaps basemaps, and PMTiles-backed terrain. The runtime now parses typed commands in the UI, logs the parsed structure, and leaves command execution work to future issues.
 
 ---
 
@@ -34,7 +34,7 @@ mapshell/
 │   └── vocabulary.js     # Browser lookup helpers for the registry
 ├── src/
 │   ├── main.js              # Runtime entrypoint
-│   ├── command_parser.js    # parseCommand(input) → action object
+│   ├── command_parser.js    # parseCommand(input) → { verb, objects } / { verb, target }
 │   ├── dataset_resolver.js  # DatasetResolver – resolve terms to datasets
 │   ├── action_engine.js     # ActionEngine – execute actions on a MapLibre map
 │   └── map.js               # initMap(container, options) – create a map

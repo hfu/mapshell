@@ -99,7 +99,7 @@ inspect
 User input
     │
     ▼
-command_parser.js      Tokenises input → { verb, noun, args }
+command_parser.js      Tokenises input → { verb, objects } / { verb, target }
     │
     ▼
 dataset_resolver.js    Resolves noun → layerPatterns via datasets.json
@@ -133,7 +133,7 @@ needing to enumerate exact layer IDs up front.
 
 | File                    | Description                                                  |
 |-------------------------|--------------------------------------------------------------|
-| `src/command_parser.js` | `parseCommand(input)` → action object                        |
+| `src/command_parser.js` | `parseCommand(input)` → parsed command object                |
 | `src/dataset_resolver.js`| `DatasetResolver` class – resolve terms to dataset configs  |
 | `src/action_engine.js`  | `ActionEngine` class – execute actions on a MapLibre map     |
 | `src/map.js`            | `initMap(container, options)` – create a MapLibre map        |

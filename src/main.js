@@ -1,11 +1,15 @@
 import "./styles.css";
 import "./vocabulary.js";
+import { parseCommand } from "./command_parser.js";
 import { initMap, MAP_TITLE } from "./map.js";
 
+const commandForm = document.querySelector("#command-form");
+const commandInput = document.querySelector("#command-input");
+const commandLog = document.querySelector("#command-log");
 const statusBar = document.querySelector("#status-bar");
 const loadingOverlay = document.querySelector("#loading-overlay");
 
-if (!statusBar || !loadingOverlay) {
+if (!commandForm || !commandInput || !commandLog || !statusBar || !loadingOverlay) {
   throw new Error("Mapshell runtime UI elements are missing.");
 }
 
@@ -47,6 +51,41 @@ const getFeatureLabel = (feature) => {
 
   return name ? `${MAP_TITLE} · ${name}` : MAP_TITLE;
 };
+
+const appendCommandLog = (text, parsedCommand) => {
+  const entry = document.createElement("article");
+  entry.className = "command-log-entry";
+
+  const command = document.createElement("p");
+  command.className = "command-log-command";
+  command.textContent = `> ${text}`;
+
+  const output = document.createElement("pre");
+  output.className = "command-log-output";
+  output.textContent = JSON.stringify(parsedCommand, null, 2);
+
+  entry.append(command, output);
+  commandLog.prepend(entry);
+
+  while (commandLog.childElementCount > 6) {
+    commandLog.lastElementChild?.remove();
+  }
+};
+
+commandForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const text = commandInput.value.trim();
+
+  if (!text) {
+    return;
+  }
+
+  const parsedCommand = parseCommand(text);
+  console.log("Parsed command:", parsedCommand);
+  appendCommandLog(text, parsedCommand);
+  commandInput.value = "";
+});
 
 setLoading(true);
 
