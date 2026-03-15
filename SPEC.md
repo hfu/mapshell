@@ -114,9 +114,9 @@ needing to enumerate exact layer IDs up front.
 
 ### Demo site (`docs/`)
 
-The `docs/` directory hosts a self-contained GitHub Pages demo.
-`docs/main.js` embeds the same logic as the `src/` modules and is served
-directly to the browser without a build step.
+The `docs/` directory hosts the built GitHub Pages runtime.
+Vite compiles the source entrypoint and inlines the JavaScript and CSS so the
+final deliverable remains a self-contained `docs/index.html`.
 
 ---
 

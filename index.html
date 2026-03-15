@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mapshell</title>
+  </head>
+  <body>
+    <div id="app">
+      <div id="map" aria-label="Mapshell map"></div>
+      <div id="status-bar" class="panel" aria-live="polite">Mapshell</div>
+      <div
+        id="loading-overlay"
+        class="panel"
+        role="status"
+        aria-live="polite"
+        aria-hidden="true"
+      >
+        Streaming new tiles.
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
