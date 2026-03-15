@@ -1,0 +1,131 @@
+# Mapshell Specification
+
+Mapshell is an experimental command-driven map interface.
+Users control a web map using simple verb–noun commands, similar to a shell interface.
+
+---
+
+## Vocabulary
+
+The canonical geographic vocabulary consists of plural nouns that represent logical map layers.
+These terms do **not** directly correspond to MapLibre GL JS layer IDs; they are resolved
+to actual style layers via `config/datasets.json`.
+
+| Term         | Category  | Description                                      |
+|--------------|-----------|--------------------------------------------------|
+| `roads`      | transport | Road network (motorways, primary, local roads)   |
+| `railways`   | transport | Railway lines and transit corridors              |
+| `airports`   | transport | Airport runways, taxiways, and aprons            |
+| `buildings`  | built     | Building footprints                              |
+| `waterways`  | water     | Rivers, streams, and canals                      |
+| `inlandwater`| water     | Lakes, reservoirs, and ponds                     |
+| `coastline`  | water     | Coastal boundary                                 |
+| `ocean`      | water     | Ocean and sea fill                               |
+| `elevation`  | terrain   | Hillshade and terrain shading                    |
+| `contours`   | terrain   | Elevation contour lines                          |
+| `landuse`    | land      | Land use and land cover polygons                 |
+| `pois`       | places    | Points of interest                               |
+
+Vocabulary is registered in `config/vocabulary.json`.
+
+---
+
+## Commands
+
+Commands follow the structure:
+
+```
+<verb> [noun] [args...]
+```
+
+### Supported verbs
+
+| Verb      | Usage                          | Description                              |
+|-----------|--------------------------------|------------------------------------------|
+| `show`    | `show <term>`                  | Make a vocabulary layer visible          |
+| `hide`    | `hide <term>`                  | Hide a vocabulary layer                  |
+| `remove`  | `remove <term>`                | Alias for `hide`                         |
+| `zoom`    | `zoom <location> [zoom-level]` | Fly to a named location or coordinates   |
+| `focus`   | `focus <location>`             | Alias for `zoom`                         |
+| `filter`  | `filter <term> <expr>`         | Apply a filter to a layer *(planned)*    |
+| `style`   | `style <term> <property>`      | Override a layer style *(planned)*       |
+| `inspect` | `inspect [term]`               | List matched layers and their visibility |
+
+### Examples
+
+```
+show roads
+hide buildings
+zoom sapporo
+zoom tokyo 14
+zoom 35.689 139.691 12
+inspect roads
+inspect
+```
+
+---
+
+## Architecture
+
+### Component overview
+
+```
+User input
+    │
+    ▼
+command_parser.js      Tokenises input → { verb, noun, args }
+    │
+    ▼
+dataset_resolver.js    Resolves noun → layerPatterns via datasets.json
+    │
+    ▼
+action_engine.js       Maps { verb, layerPatterns } → MapLibre API calls
+    │
+    ▼
+MapLibre GL JS         Renders tiles and applies layer changes
+```
+
+### Configuration files
+
+| File                    | Purpose                                                      |
+|-------------------------|--------------------------------------------------------------|
+| `config/vocabulary.json`| Canonical term registry with categories                      |
+| `config/datasets.json`  | Maps vocabulary terms to layer ID patterns in the map style  |
+| `config/styles.json`    | Default paint/layout properties for custom layer additions   |
+
+### Layer resolution strategy
+
+`config/datasets.json` defines `layerPatterns` for each vocabulary term.
+At runtime, the action engine scans `map.getStyle().layers` and collects all
+layer IDs that contain any of the patterns as a substring.
+
+This approach is style-agnostic: it works with any OpenMapTiles-compatible
+style (e.g. OpenFreeMap Liberty, MapTiler Basic, Protomaps basemap) without
+needing to enumerate exact layer IDs up front.
+
+### Source modules
+
+| File                    | Description                                                  |
+|-------------------------|--------------------------------------------------------------|
+| `src/command_parser.js` | `parseCommand(input)` → action object                        |
+| `src/dataset_resolver.js`| `DatasetResolver` class – resolve terms to dataset configs  |
+| `src/action_engine.js`  | `ActionEngine` class – execute actions on a MapLibre map     |
+| `src/map.js`            | `initMap(container, options)` – create a MapLibre map        |
+
+### Demo site (`docs/`)
+
+The `docs/` directory hosts a self-contained GitHub Pages demo.
+`docs/main.js` embeds the same logic as the `src/` modules and is served
+directly to the browser without a build step.
+
+---
+
+## Future directions
+
+The following capabilities are intentionally **not** implemented yet:
+
+- LLM / natural-language command integration
+- `filter` and `style` command implementations
+- Advanced layer styling and theming
+- Analytics overlays
+- Custom geocoder for the `zoom` command

@@ -1,0 +1,51 @@
+{
+  "_note": "Maps vocabulary terms to vector tile layer patterns. layerPatterns are matched as substrings against layer IDs in the loaded map style.",
+  "roads": {
+    "description": "Road network",
+    "layerPatterns": ["road_", "road-", "motorway", "highway"]
+  },
+  "railways": {
+    "description": "Railway lines and transit",
+    "layerPatterns": ["railway", "rail_", "transit"]
+  },
+  "airports": {
+    "description": "Airport infrastructure",
+    "layerPatterns": ["aeroway", "airport", "runway", "taxiway"]
+  },
+  "buildings": {
+    "description": "Building footprints",
+    "layerPatterns": ["building"]
+  },
+  "waterways": {
+    "description": "Rivers, streams, and canals",
+    "layerPatterns": ["waterway"]
+  },
+  "inlandwater": {
+    "description": "Lakes, ponds, and reservoirs",
+    "layerPatterns": ["water_", "water-", "lake", "reservoir", "pond"]
+  },
+  "coastline": {
+    "description": "Coastline boundary",
+    "layerPatterns": ["coast", "shoreline"]
+  },
+  "ocean": {
+    "description": "Ocean and sea fill",
+    "layerPatterns": ["ocean", "sea_", "sea-"]
+  },
+  "elevation": {
+    "description": "Hillshade and terrain shading",
+    "layerPatterns": ["hillshade", "elevation", "terrain"]
+  },
+  "contours": {
+    "description": "Elevation contour lines",
+    "layerPatterns": ["contour"]
+  },
+  "landuse": {
+    "description": "Land use and land cover",
+    "layerPatterns": ["landuse", "landcover", "land_use", "land_cover"]
+  },
+  "pois": {
+    "description": "Points of interest",
+    "layerPatterns": ["poi"]
+  }
+}
