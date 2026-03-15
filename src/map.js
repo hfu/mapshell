@@ -14,15 +14,14 @@ const DEFAULT_PITCH = 50;
 const DEFAULT_BEARING = 18;
 const HILLSHADE_LAYER_ID = "terrain-hillshade";
 const CONTROLLED_LAYERS = {
-  background: "Background",
-  landcover: "Landcover",
-  water: "Water",
-  buildings: "Buildings",
-  roads_major: "Major roads",
-  roads_minor: "Minor roads",
-  roads_rail: "Railways",
-  places_locality: "Places",
-  [HILLSHADE_LAYER_ID]: "Hillshade"
+  background: { name: "Background", opacity: 1 },
+  water: { name: "Water", opacity: 1 },
+  buildings: { name: "Buildings", opacity: 0.5 },
+  roads_major: { name: "Major roads", opacity: 1 },
+  roads_minor: { name: "Minor roads", opacity: 1 },
+  roads_rail: { name: "Railways", opacity: 0.5 },
+  places_locality: { name: "Places", opacity: 1 },
+  [HILLSHADE_LAYER_ID]: { name: "Hillshade", opacity: 1 }
 };
 
 const pmtilesProtocol = new Protocol();
@@ -127,9 +126,7 @@ function addControls(map) {
     new LayerControl({
       collapsed: true,
       layers: Object.keys(CONTROLLED_LAYERS),
-      layerStates: Object.fromEntries(
-        Object.entries(CONTROLLED_LAYERS).map(([layerId, name]) => [layerId, { name }])
-      ),
+      layerStates: Object.fromEntries(Object.entries(CONTROLLED_LAYERS)),
       showStyleEditor: false,
       showOpacitySlider: true,
       showLayerSymbol: true,
