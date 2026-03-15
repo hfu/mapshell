@@ -56,7 +56,7 @@ export class ActionEngine {
    * @param {maplibregl.Map} map - MapLibre GL JS map instance
    * @param {Object} datasets - Dataset registry from config/datasets.json
    * @param {Object} styles - Style registry from config/styles.json
-   * @param {Object} vocabulary - Vocabulary registry from config/vocabulary.json
+   * @param {Object} vocabulary - Vocabulary registry loaded for command terms
    */
   constructor(map, datasets, styles, vocabulary) {
     this.map = map;

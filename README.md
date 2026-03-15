@@ -26,17 +26,18 @@ mapshell/
 ├── index.html            # Vite entry HTML
 ├── package.json          # Pinned runtime dependencies
 ├── config/
-│   ├── vocabulary.json   # Canonical geographic vocabulary with categories
 │   ├── datasets.json     # Maps vocabulary terms to style layer patterns
 │   └── styles.json       # Default paint/layout properties
+├── docs/
+│   ├── index.html        # Built single-file GitHub Pages runtime
+│   ├── vocabulary.json   # Public semantic vocabulary registry
+│   └── vocabulary.js     # Browser lookup helpers for the registry
 ├── src/
 │   ├── main.js              # Runtime entrypoint
 │   ├── command_parser.js    # parseCommand(input) → action object
 │   ├── dataset_resolver.js  # DatasetResolver – resolve terms to datasets
 │   ├── action_engine.js     # ActionEngine – execute actions on a MapLibre map
 │   └── map.js               # initMap(container, options) – create a map
-└── docs/
-    └── index.html        # Built single-file GitHub Pages runtime
 ```
 
 ---
@@ -81,7 +82,9 @@ Full vocabulary and architecture: see [SPEC.md](SPEC.md).
 
 ## Vocabulary
 
-Canonical geographic terms (plural nouns):
+Canonical geographic terms (plural nouns) are published in `docs/vocabulary.json`
+and exposed in the browser console through `getVocabulary(term)` and
+`listVocabulary()`:
 
 `roads` · `railways` · `airports` · `buildings` · `waterways` · `inlandwater` ·
 `coastline` · `ocean` · `elevation` · `contours` · `landuse` · `pois`
