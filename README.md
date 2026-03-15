@@ -12,7 +12,7 @@ inspect waterways
 
 → **[Live demo](https://hfu.github.io/mapshell/docs/)**
 
-Current demo status: the GitHub Pages page is a single self-contained HTML file that renders a placeholder MapLibre demo map and logs submitted commands. Parser and action-engine integration into the demo remain future work.
+Current demo status: the GitHub Pages page is built with Vite as a single self-contained `docs/index.html` runtime using MapLibre GL JS, Protomaps basemaps, and PMTiles-backed terrain. Parser and action-engine integration into the runtime remain future work.
 
 ---
 
@@ -22,34 +22,43 @@ Current demo status: the GitHub Pages page is a single self-contained HTML file 
 mapshell/
 ├── SPEC.md               # Vocabulary, commands, and architecture
 ├── README.md
+├── Justfile              # just dev / build / preview wrappers
+├── index.html            # Vite entry HTML
+├── package.json          # Pinned runtime dependencies
 ├── config/
 │   ├── vocabulary.json   # Canonical geographic vocabulary with categories
 │   ├── datasets.json     # Maps vocabulary terms to style layer patterns
 │   └── styles.json       # Default paint/layout properties
 ├── src/
+│   ├── main.js              # Runtime entrypoint
 │   ├── command_parser.js    # parseCommand(input) → action object
 │   ├── dataset_resolver.js  # DatasetResolver – resolve terms to datasets
 │   ├── action_engine.js     # ActionEngine – execute actions on a MapLibre map
 │   └── map.js               # initMap(container, options) – create a map
 └── docs/
-    └── index.html        # Self-contained demo page (GitHub Pages)
+    └── index.html        # Built single-file GitHub Pages runtime
 ```
 
 ---
 
 ## Running the demo locally
 
-No build step is required. Serve the repository root with any static file server:
+Install the pinned dependencies once:
 
 ```bash
-# Python 3
-python -m http.server 8080
-
-# Node.js (npx)
-npx serve .
+npm install
 ```
 
-Then open `http://localhost:8080/docs/` in your browser.
+Use `just` to wrap the Vite workflow:
+
+```bash
+just dev
+just build
+just preview
+```
+
+`just dev` and `just preview` both run Vite with `--host`, so LAN access stays available.
+The production build is written directly to `docs/index.html` as a self-contained single file.
 
 ---
 
@@ -84,17 +93,20 @@ Canonical geographic terms (plural nouns):
 - **Simplicity first** – minimal vocabulary, minimal code
 - **Command-driven interaction** – all map state changes via commands
 - **JSON configuration** – vocabulary and datasets are data, not code
-- **No build step** – a single self-contained HTML demo, no bundler required
+- **Single-file deploy** – Vite builds a self-contained `docs/index.html`
 - **No heavy frameworks** – vanilla JavaScript only
 
 ---
 
 ## Tile source
 
-The demo uses the free [OpenFreeMap](https://openfreemap.org/) Liberty style.
-To use a different tile source (e.g. Protomaps, MapTiler, a local Martin server),
-update `config/datasets.json` with your source's layer patterns and change the
-style URL in `docs/index.html`.
+The runtime uses a Protomaps dark basemap from the Martin TileJSON endpoint:
+
+- `https://tunnel.optgeo.org/martin/protomaps-basemap`
+
+Terrain and hillshade come from:
+
+- `https://tunnel.optgeo.org/martin/mapterhorn`
 
 ---
 
