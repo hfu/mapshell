@@ -9,7 +9,8 @@ Users control a web map using simple verb–noun commands, similar to a shell in
 
 The canonical geographic vocabulary consists of plural nouns that represent logical map layers.
 These terms do **not** directly correspond to MapLibre GL JS layer IDs; they are resolved
-to actual style layers via `config/datasets.json`.
+through the public semantic registry in `docs/vocabulary.json` and matched to
+actual style layers via `config/datasets.json`.
 
 | Term         | Category  | Description                                      |
 |--------------|-----------|--------------------------------------------------|
@@ -26,7 +27,7 @@ to actual style layers via `config/datasets.json`.
 | `landuse`    | land      | Land use and land cover polygons                 |
 | `pois`       | places    | Points of interest                               |
 
-Vocabulary is registered in `config/vocabulary.json`.
+Vocabulary is registered in `docs/vocabulary.json`.
 
 ---
 
@@ -89,7 +90,7 @@ MapLibre GL JS         Renders tiles and applies layer changes
 
 | File                    | Purpose                                                      |
 |-------------------------|--------------------------------------------------------------|
-| `config/vocabulary.json`| Canonical term registry with categories                      |
+| `docs/vocabulary.json`  | Canonical term registry with dataset-layer mappings          |
 | `config/datasets.json`  | Maps vocabulary terms to layer ID patterns in the map style  |
 | `config/styles.json`    | Default paint/layout properties for custom layer additions   |
 
