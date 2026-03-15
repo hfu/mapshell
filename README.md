@@ -12,7 +12,7 @@ inspect waterways
 
 → **[Live demo](https://hfu.github.io/mapshell/docs/)**
 
-Current demo status: the GitHub Pages page is a single self-contained HTML file that renders a placeholder MapLibre demo map and logs submitted commands. Full command execution remains future work.
+Current demo status: the GitHub Pages page is a single self-contained HTML file that renders a placeholder MapLibre demo map and logs submitted commands. Parser and action-engine integration into the demo remain future work.
 
 ---
 
