@@ -4,7 +4,7 @@ import { viteSingleFile } from "vite-plugin-singlefile";
 export default defineConfig({
   build: {
     outDir: "docs",
-    emptyOutDir: false,
+    emptyOutDir: true,
     cssCodeSplit: false,
     sourcemap: false
   },

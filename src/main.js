@@ -1,5 +1,5 @@
 import "./styles.css";
-import "../docs/vocabulary.js";
+import "./vocabulary.js";
 import { initMap, MAP_TITLE } from "./map.js";
 
 const statusBar = document.querySelector("#status-bar");
