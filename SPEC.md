@@ -33,11 +33,32 @@ Vocabulary is registered in `docs/vocabulary.json`.
 
 ## Commands
 
-Commands follow the structure:
+Commands follow a short, verb-first grammar with optional natural-language filler
+words:
 
+```text
+command            ::= visibility-command
+                     | navigation-command
+                     | inspect-command
+                     | filter-command
+                     | style-command
+
+visibility-command ::= ("show" | "hide" | "remove") [article]... <term>
+navigation-command ::= ("zoom" | "focus") [direction] <location> [zoom-level]
+inspect-command    ::= "inspect" [article]... [<term>]
+filter-command     ::= "filter" [article]... <term> <expr>
+style-command      ::= "style" [article]... <term> <property>
+
+article            ::= "the" | "all"
+direction          ::= "to"
 ```
-<verb> [noun] [args...]
-```
+
+The parser strips only these filler words when they appear immediately after the
+verb. Everything after the noun remains in `args` for vocabulary resolution or
+later command-specific handling.
+
+This keeps commands simple, predictable, natural to read, and easy for an LLM
+to generate.
 
 ### Supported verbs
 
@@ -56,11 +77,15 @@ Commands follow the structure:
 
 ```
 show roads
+show the roads
 hide buildings
+hide all buildings
 zoom sapporo
+zoom to tokyo
 zoom tokyo 14
 zoom 35.689 139.691 12
 inspect roads
+inspect all
 inspect
 ```
 
