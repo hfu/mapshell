@@ -81,13 +81,19 @@ export class ActionEngine {
     }
 
     if (Array.isArray(action.objects) && ['show', 'hide', 'remove'].includes(action.verb)) {
-      const handler = action.verb === 'show' ? this._show : this._hide;
+      const handlers = {
+        show: this._show,
+        hide: this._hide,
+        remove: this._hide
+      };
+      const handler = handlers[action.verb];
       const results = action.objects.map((term) => handler.call(this, term));
       const failures = results.filter(({ ok }) => !ok);
+      const messageSources = failures.length > 0 ? failures : results;
 
       return {
         ok: failures.length === 0,
-        message: (failures.length > 0 ? failures : results).map(({ message }) => message).join('; ')
+        message: messageSources.map(({ message }) => message).join('; ')
       };
     }
 
