@@ -1,7 +1,9 @@
 import "./styles.css";
-import "./vocabulary.js";
+import { vocabulary } from "./vocabulary.js";
 import { parseCommand } from "./command_parser.js";
+import { ActionEngine } from "./action_engine.js";
 import { initMap, MAP_TITLE } from "./map.js";
+import datasets from "../config/datasets.json";
 
 const commandForm = document.querySelector("#command-form");
 const commandInput = document.querySelector("#command-input");
@@ -23,6 +25,8 @@ try {
   console.error("Failed to initialize the Mapshell runtime.", error);
   throw error;
 }
+
+const actionEngine = new ActionEngine(map, datasets, {}, vocabulary);
 
 let isLoading = false;
 
@@ -82,8 +86,9 @@ commandForm.addEventListener("submit", (event) => {
   }
 
   const parsedCommand = parseCommand(text);
-  console.log("Parsed command:", parsedCommand);
-  appendCommandLog(text, parsedCommand);
+  const execution = actionEngine.execute(parsedCommand);
+  console.log("Parsed command:", parsedCommand, "Execution:", execution);
+  appendCommandLog(text, { parsed: parsedCommand, execution });
   commandInput.value = "";
 });
 
