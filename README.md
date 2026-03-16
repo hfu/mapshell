@@ -75,6 +75,7 @@ The production build is written directly to `docs/index.html` as a self-containe
 | `focus`   | `focus europe`            | Alias for `zoom`                       |
 | `inspect` | `inspect roads`           | Show matched layers and their state    |
 | `inspect` | `inspect`                 | List all layers in the current style   |
+| `show`    | `show hospitals near coast` | Highlight features that are spatially near another layer |
 
 Full vocabulary and architecture: see [SPEC.md](SPEC.md).
 
@@ -86,8 +87,9 @@ Canonical geographic terms (plural nouns) are published in `docs/vocabulary.json
 and exposed in the browser console through `getVocabulary(term)` and
 `listVocabulary()`:
 
-`roads` · `railways` · `airports` · `buildings` · `waterways` · `inlandwater` ·
-`coastline` · `ocean` · `elevation` · `contours` · `landuse` · `pois`
+`roads` · `railways` · `airports` · `buildings` · `waterways` · `rivers` ·
+`inlandwater` · `coastline` · `coast` · `ocean` · `elevation` · `contours` ·
+`landuse` · `pois` · `schools` · `hospitals`
 
 ---
 

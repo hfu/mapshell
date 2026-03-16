@@ -42,12 +42,14 @@ command            ::= visibility-command
                      | inspect-command
                      | filter-command
                      | style-command
+                     | spatial-command
 
 visibility-command ::= ("show" | "hide" | "remove") [article]... <term>
 navigation-command ::= ("zoom" | "focus") [direction] <location> [zoom-level]
 inspect-command    ::= "inspect" [article]... [<term>]
 filter-command     ::= "filter" [article]... <term> <expr>
 style-command      ::= "style" [article]... <term> <property>
+spatial-command    ::= "show" [article]... <term> "near" <term>
 
 article            ::= "the" | "all"
 direction          ::= "to"
@@ -72,12 +74,15 @@ to generate.
 | `filter`  | `filter <term> <expr>`         | Apply a filter to a layer *(planned)*    |
 | `style`   | `style <term> <property>`      | Override a layer style *(planned)*       |
 | `inspect` | `inspect [term]`               | List matched layers and their visibility |
+| `show`    | `show <term> near <term>`      | Highlight features that are spatially near another term |
 
 ### Examples
 
 ```
 show roads
 show the roads
+show schools near rivers
+show hospitals near coast
 hide buildings
 hide all buildings
 zoom sapporo

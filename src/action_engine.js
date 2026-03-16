@@ -51,6 +51,14 @@ const LOCATIONS = {
   buenosaires:   { center: [-58.381, -34.603],zoom: 11 }
 };
 
+const SPATIAL_RESULTS_SOURCE_ID = 'mapshell-spatial-results';
+const SPATIAL_RESULTS_LAYER_IDS = {
+  fill: 'mapshell-spatial-results-fill',
+  line: 'mapshell-spatial-results-line',
+  point: 'mapshell-spatial-results-point'
+};
+const NEAR_DISTANCE_THRESHOLD = 0.05;
+
 export class ActionEngine {
   /**
    * @param {maplibregl.Map} map - MapLibre GL JS map instance
@@ -78,6 +86,11 @@ export class ActionEngine {
   execute(action) {
     if (action.error) {
       return { ok: false, message: action.error };
+    }
+
+    if (action.spatial?.operator === 'near') {
+      const [subject = null] = action.objects ?? [];
+      return this._showNear(subject, action.spatial.object, action.verb);
     }
 
     if (Array.isArray(action.objects) && ['show', 'hide', 'remove'].includes(action.verb)) {
@@ -205,6 +218,48 @@ export class ActionEngine {
     return { ok: true, message: `"${term}": ${summary}` };
   }
 
+  _showNear(term, referenceTerm, verb) {
+    if (verb !== 'show') {
+      return { ok: false, message: `"${verb}" does not yet support the near operator` };
+    }
+
+    if (!term || !referenceTerm) {
+      return { ok: false, message: 'show near requires two nouns — e.g. "show schools near rivers"' };
+    }
+
+    const dataset = this._getDataset(term);
+    if (!dataset) return { ok: false, message: this._unknownTermMsg(term) };
+
+    const referenceDataset = this._getDataset(referenceTerm);
+    if (!referenceDataset) return { ok: false, message: this._unknownTermMsg(referenceTerm) };
+
+    const layers = this._findLayers(dataset.layerPatterns);
+    if (layers.length === 0) {
+      return { ok: false, message: `No matching layers found for "${term}" in the current style` };
+    }
+
+    const referenceLayers = this._findLayers(referenceDataset.layerPatterns);
+    if (referenceLayers.length === 0) {
+      return { ok: false, message: `No matching layers found for "${referenceTerm}" in the current style` };
+    }
+
+    layers.forEach(id => this.map.setLayoutProperty(id, 'visibility', 'visible'));
+    referenceLayers.forEach(id => this.map.setLayoutProperty(id, 'visibility', 'visible'));
+
+    const features = this._queryFeatures(layers, dataset);
+    const referenceFeatures = this._queryFeatures(referenceLayers, referenceDataset);
+    const matches = features.filter(feature =>
+      referenceFeatures.some(referenceFeature => this._featuresAreNear(feature, referenceFeature))
+    );
+
+    this._updateSpatialResults(matches);
+
+    return {
+      ok: true,
+      message: `Showing ${term} near ${referenceTerm} (${matches.length} feature${matches.length !== 1 ? 's' : ''})`
+    };
+  }
+
   // ── helpers ───────────────────────────────────────────────────────────────
 
   /**
@@ -231,6 +286,161 @@ export class ActionEngine {
         patterns.some(p => layer.id.toLowerCase().includes(p.toLowerCase()))
       )
       .map(layer => layer.id);
+  }
+
+  _queryFeatures(layers, dataset) {
+    if (typeof this.map.queryRenderedFeatures !== 'function') {
+      return [];
+    }
+
+    return this.map
+      .queryRenderedFeatures({ layers })
+      .filter(feature => this._matchesFeatureSelector(feature, dataset.featureSelectors));
+  }
+
+  _matchesFeatureSelector(feature, selectors) {
+    if (!selectors) return true;
+
+    return Object.entries(selectors).some(([property, acceptedValues]) => {
+      const featureValue = feature?.properties?.[property];
+      const normalizedFeatureValues = Array.isArray(featureValue)
+        ? featureValue.map(value => String(value).toLowerCase())
+        : featureValue == null
+          ? []
+          : [String(featureValue).toLowerCase()];
+
+      return acceptedValues.some(value => normalizedFeatureValues.includes(String(value).toLowerCase()));
+    });
+  }
+
+  _featuresAreNear(feature, referenceFeature) {
+    const featureBounds = this._getGeometryBounds(feature?.geometry);
+    const referenceBounds = this._getGeometryBounds(referenceFeature?.geometry);
+
+    if (!featureBounds || !referenceBounds) {
+      return false;
+    }
+
+    const xDistance = Math.max(0, featureBounds[0] - referenceBounds[2], referenceBounds[0] - featureBounds[2]);
+    const yDistance = Math.max(0, featureBounds[1] - referenceBounds[3], referenceBounds[1] - featureBounds[3]);
+
+    return Math.hypot(xDistance, yDistance) <= NEAR_DISTANCE_THRESHOLD;
+  }
+
+  _getGeometryBounds(geometry) {
+    const coordinates = [];
+    this._collectCoordinates(geometry, coordinates);
+
+    if (coordinates.length === 0) {
+      return null;
+    }
+
+    const [firstX, firstY] = coordinates[0];
+    return coordinates.reduce(
+      ([minX, minY, maxX, maxY], [x, y]) => [
+        Math.min(minX, x),
+        Math.min(minY, y),
+        Math.max(maxX, x),
+        Math.max(maxY, y)
+      ],
+      [firstX, firstY, firstX, firstY]
+    );
+  }
+
+  _collectCoordinates(geometry, coordinates) {
+    if (!geometry) {
+      return;
+    }
+
+    if (geometry.type === 'GeometryCollection') {
+      geometry.geometries?.forEach(item => this._collectCoordinates(item, coordinates));
+      return;
+    }
+
+    this._walkCoordinates(geometry.coordinates, coordinates);
+  }
+
+  _walkCoordinates(value, coordinates) {
+    if (!Array.isArray(value) || value.length === 0) {
+      return;
+    }
+
+    if (typeof value[0] === 'number' && typeof value[1] === 'number') {
+      coordinates.push([value[0], value[1]]);
+      return;
+    }
+
+    value.forEach(item => this._walkCoordinates(item, coordinates));
+  }
+
+  _updateSpatialResults(features) {
+    const source = this.map.getSource?.(SPATIAL_RESULTS_SOURCE_ID);
+    const data = {
+      type: 'FeatureCollection',
+      features: features.map(feature => ({
+        type: 'Feature',
+        id: feature.id,
+        properties: feature.properties ?? {},
+        geometry: feature.geometry
+      }))
+    };
+
+    if (source && typeof source.setData === 'function') {
+      source.setData(data);
+    } else {
+      this.map.addSource?.(SPATIAL_RESULTS_SOURCE_ID, {
+        type: 'geojson',
+        data
+      });
+    }
+
+    this._ensureSpatialResultsLayers();
+  }
+
+  _ensureSpatialResultsLayers() {
+    const definitions = [
+      {
+        id: SPATIAL_RESULTS_LAYER_IDS.fill,
+        type: 'fill',
+        filter: ['==', ['geometry-type'], 'Polygon'],
+        paint: {
+          'fill-color': '#f6c945',
+          'fill-opacity': 0.45,
+          'fill-outline-color': '#ffe388'
+        }
+      },
+      {
+        id: SPATIAL_RESULTS_LAYER_IDS.line,
+        type: 'line',
+        filter: ['==', ['geometry-type'], 'LineString'],
+        paint: {
+          'line-color': '#f6c945',
+          'line-width': 4
+        }
+      },
+      {
+        id: SPATIAL_RESULTS_LAYER_IDS.point,
+        type: 'circle',
+        filter: ['==', ['geometry-type'], 'Point'],
+        paint: {
+          'circle-color': '#f6c945',
+          'circle-radius': 7,
+          'circle-stroke-color': '#ffffff',
+          'circle-stroke-width': 2
+        }
+      }
+    ];
+
+    definitions.forEach((definition) => {
+      if (this.map.getLayer?.(definition.id)) {
+        return;
+      }
+
+      this.map.addLayer?.({
+        ...definition,
+        source: SPATIAL_RESULTS_SOURCE_ID
+      });
+    });
   }
 
   /**

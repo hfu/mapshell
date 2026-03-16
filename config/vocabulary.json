@@ -19,11 +19,19 @@
     "category": "water",
     "description": "Rivers, streams, and canals"
   },
+  "rivers": {
+    "category": "water",
+    "description": "River features"
+  },
   "inlandwater": {
     "category": "water",
     "description": "Lakes, reservoirs, and ponds"
   },
   "coastline": {
+    "category": "water",
+    "description": "Coastal boundary between land and sea"
+  },
+  "coast": {
     "category": "water",
     "description": "Coastal boundary between land and sea"
   },
@@ -46,5 +54,13 @@
   "pois": {
     "category": "places",
     "description": "Points of interest"
+  },
+  "schools": {
+    "category": "places",
+    "description": "Schools and universities"
+  },
+  "hospitals": {
+    "category": "places",
+    "description": "Hospitals and clinics"
   }
 }
