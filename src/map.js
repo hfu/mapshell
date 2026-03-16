@@ -119,7 +119,7 @@ function addTerrain(map) {
   });
 }
 
-function addControls(map) {
+export function addControls(map) {
   map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "bottom-left");
 
   map.addControl(
@@ -134,6 +134,8 @@ function addControls(map) {
     }),
     "bottom-left"
   );
+
+  map.addControl(new maplibregl.GeolocateControl(), "bottom-left");
 }
 
 export function initMap(container, options = {}) {
