@@ -59,17 +59,25 @@
   "schools": {
     "description": "Schools and universities",
     "layerPatterns": ["poi"],
-    "featureSelectors": {
-      "class": ["school", "college", "university"],
-      "subclass": ["school", "college", "university"]
-    }
+    "featureSelectors": [
+      {
+        "class": ["school", "college", "university"]
+      },
+      {
+        "subclass": ["school", "college", "university"]
+      }
+    ]
   },
   "hospitals": {
     "description": "Hospitals and clinics",
     "layerPatterns": ["poi"],
-    "featureSelectors": {
-      "class": ["hospital", "clinic"],
-      "subclass": ["hospital", "clinic"]
-    }
+    "featureSelectors": [
+      {
+        "class": ["hospital", "clinic"]
+      },
+      {
+        "subclass": ["hospital", "clinic"]
+      }
+    ]
   }
 }

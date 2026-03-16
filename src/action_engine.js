@@ -289,7 +289,7 @@ export class ActionEngine {
   }
 
   _queryFeatures(layers, dataset) {
-    if (typeof this.map.queryRenderedFeatures !== 'function') {
+    if (!Array.isArray(layers) || layers.length === 0 || typeof this.map.queryRenderedFeatures !== 'function') {
       return [];
     }
 
@@ -301,16 +301,20 @@ export class ActionEngine {
   _matchesFeatureSelector(feature, selectors) {
     if (!selectors) return true;
 
-    return Object.entries(selectors).some(([property, acceptedValues]) => {
-      const featureValue = feature?.properties?.[property];
-      const normalizedFeatureValues = Array.isArray(featureValue)
-        ? featureValue.map(value => String(value).toLowerCase())
-        : featureValue == null
-          ? []
-          : [String(featureValue).toLowerCase()];
+    const selectorGroups = Array.isArray(selectors) ? selectors : [selectors];
 
-      return acceptedValues.some(value => normalizedFeatureValues.includes(String(value).toLowerCase()));
-    });
+    return selectorGroups.some((selector) =>
+      Object.entries(selector).every(([property, acceptedValues]) => {
+        const featureValue = feature?.properties?.[property];
+        const normalizedFeatureValues = Array.isArray(featureValue)
+          ? featureValue.map(value => String(value).toLowerCase())
+          : featureValue == null
+            ? []
+            : [String(featureValue).toLowerCase()];
+
+        return acceptedValues.some(value => normalizedFeatureValues.includes(String(value).toLowerCase()));
+      })
+    );
   }
 
   _featuresAreNear(feature, referenceFeature) {
@@ -321,8 +325,10 @@ export class ActionEngine {
       return false;
     }
 
-    const xDistance = Math.max(0, featureBounds[0] - referenceBounds[2], referenceBounds[0] - featureBounds[2]);
-    const yDistance = Math.max(0, featureBounds[1] - referenceBounds[3], referenceBounds[1] - featureBounds[3]);
+    const [featureMinX, featureMinY, featureMaxX, featureMaxY] = featureBounds;
+    const [referenceMinX, referenceMinY, referenceMaxX, referenceMaxY] = referenceBounds;
+    const xDistance = Math.max(0, featureMinX - referenceMaxX, referenceMinX - featureMaxX);
+    const yDistance = Math.max(0, featureMinY - referenceMaxY, referenceMinY - featureMaxY);
 
     return Math.hypot(xDistance, yDistance) <= NEAR_DISTANCE_THRESHOLD;
   }

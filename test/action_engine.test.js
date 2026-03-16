@@ -195,3 +195,24 @@ test("shows only features that are near the reference dataset", () => {
     message: "Showing hospitals near coast (1 feature)"
   });
 });
+
+test("returns a spatial result with no matches when features are outside the threshold", () => {
+  const map = createMap();
+  const engine = new ActionEngine(map, datasets, {}, {});
+
+  const result = engine.execute({
+    verb: "show",
+    objects: ["schools"],
+    spatial: {
+      operator: "near",
+      object: "coast"
+    },
+    raw: "show schools near coast"
+  });
+
+  assert.deepEqual(map.getSource("mapshell-spatial-results").data.features, []);
+  assert.deepEqual(result, {
+    ok: true,
+    message: "Showing schools near coast (0 features)"
+  });
+});
