@@ -68,7 +68,10 @@ export class ActionEngine {
   /**
    * Execute a parsed command action.
    *
-   * @param {{ verb: string, noun: string|null, args: string[] }
+   * Accepts either the internal action format ({ noun, args }) or the parser
+   * output format ({ objects } / { target }).
+   *
+   * @param {{ verb: string, noun?: string|null, args?: string[], objects?: string[], target?: string|null }
    *        |{ error: string }} action
    * @returns {{ ok: boolean, message: string }}
    */
@@ -77,17 +80,30 @@ export class ActionEngine {
       return { ok: false, message: action.error };
     }
 
-    switch (action.verb) {
-      case 'show':    return this._show(action.noun);
-      case 'hide':    return this._hide(action.noun);
-      case 'remove':  return this._hide(action.noun);
-      case 'zoom':    return this._zoom(action.noun, action.args);
-      case 'focus':   return this._zoom(action.noun, action.args);
-      case 'filter':  return this._filter(action.noun, action.args);
-      case 'style':   return this._styleLayer(action.noun, action.args);
-      case 'inspect': return this._inspect(action.noun);
+    if (Array.isArray(action.objects) && ['show', 'hide', 'remove'].includes(action.verb)) {
+      const handler = action.verb === 'show' ? this._show : this._hide;
+      const results = action.objects.map((term) => handler.call(this, term));
+      const failures = results.filter(({ ok }) => !ok);
+
+      return {
+        ok: failures.length === 0,
+        message: (failures.length > 0 ? failures : results).map(({ message }) => message).join('; ')
+      };
+    }
+
+    const normalizedAction = this._normalizeAction(action);
+
+    switch (normalizedAction.verb) {
+      case 'show':    return this._show(normalizedAction.noun);
+      case 'hide':    return this._hide(normalizedAction.noun);
+      case 'remove':  return this._hide(normalizedAction.noun);
+      case 'zoom':    return this._zoom(normalizedAction.noun, normalizedAction.args);
+      case 'focus':   return this._zoom(normalizedAction.noun, normalizedAction.args);
+      case 'filter':  return this._filter(normalizedAction.noun, normalizedAction.args);
+      case 'style':   return this._styleLayer(normalizedAction.noun, normalizedAction.args);
+      case 'inspect': return this._inspect(normalizedAction.noun);
       default:
-        return { ok: false, message: `Unsupported verb: "${action.verb}"` };
+        return { ok: false, message: `Unsupported verb: "${normalizedAction.verb}"` };
     }
   }
 
@@ -221,5 +237,30 @@ export class ActionEngine {
       .filter(k => !k.startsWith('_'))
       .join(', ');
     return `Unknown term: "${term}". Available: ${available}`;
+  }
+
+  _normalizeAction(action) {
+    if (action.target !== undefined) {
+      return {
+        verb: action.verb,
+        noun: action.target,
+        args: []
+      };
+    }
+
+    if (action.noun !== undefined || action.args !== undefined) {
+      return {
+        verb: action.verb,
+        noun: action.noun ?? null,
+        args: action.args ?? []
+      };
+    }
+
+    const [noun = null, ...args] = action.objects ?? [];
+    return {
+      verb: action.verb,
+      noun,
+      args
+    };
   }
 }
