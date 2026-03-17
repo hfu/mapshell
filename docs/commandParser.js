@@ -5,6 +5,7 @@
  * Grammar:
  *   command ::= object-command | target-command
  *   object-command ::= verb [filler...] object ("and" object)*
+ *   spatial-command ::= verb [filler...] object "near" object
  *   target-command ::= ("zoom" | "focus") ["to"] target
  */
 
@@ -29,7 +30,7 @@ const FILLERS_BY_VERB = {
  * Parse a command string into a structured command object.
  *
  * @param {string} input - Raw command string, e.g. "show roads" or "zoom tokyo"
- * @returns {{ verb: string, objects: string[], raw: string }
+ * @returns {{ verb: string, objects: string[], raw: string, spatial?: { operator: string, object: string } }
  *           |{ verb: string, target: string|null, raw: string }
  *           |{ error: string, raw: string }}
  *
@@ -77,8 +78,32 @@ export function parseCommand(input) {
     };
   }
 
-  const objects = phrase
-    .filter(token => !fillers.has(token))
+  const objectPhrase = phrase.filter(token => !fillers.has(token));
+  const nearIndex = objectPhrase.indexOf('near');
+
+  if (nearIndex !== -1) {
+    const subject = objectPhrase.slice(0, nearIndex).join(' ').trim();
+    const reference = objectPhrase.slice(nearIndex + 1).join(' ').trim();
+
+    if (!subject || !reference) {
+      return {
+        error: 'near requires terms on both sides — e.g. "show schools near rivers"',
+        raw
+      };
+    }
+
+    return {
+      verb,
+      objects: [subject],
+      spatial: {
+        operator: 'near',
+        object: reference
+      },
+      raw
+    };
+  }
+
+  const objects = objectPhrase
     .join(' ')
     .split(/\band\b/g)
     .map(token => token.trim())

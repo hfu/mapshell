@@ -20,11 +20,19 @@
     "description": "Rivers, streams, and canals",
     "layerPatterns": ["waterway"]
   },
+  "rivers": {
+    "description": "River features",
+    "layerPatterns": ["waterway"]
+  },
   "inlandwater": {
     "description": "Lakes, ponds, and reservoirs",
     "layerPatterns": ["water_", "water-", "lake", "reservoir", "pond"]
   },
   "coastline": {
+    "description": "Coastline boundary",
+    "layerPatterns": ["coast", "shoreline"]
+  },
+  "coast": {
     "description": "Coastline boundary",
     "layerPatterns": ["coast", "shoreline"]
   },
@@ -47,5 +55,29 @@
   "pois": {
     "description": "Points of interest",
     "layerPatterns": ["poi"]
+  },
+  "schools": {
+    "description": "Schools and universities",
+    "layerPatterns": ["poi"],
+    "featureSelectors": [
+      {
+        "class": ["school", "college", "university"]
+      },
+      {
+        "subclass": ["school", "college", "university"]
+      }
+    ]
+  },
+  "hospitals": {
+    "description": "Hospitals and clinics",
+    "layerPatterns": ["poi"],
+    "featureSelectors": [
+      {
+        "class": ["hospital", "clinic"]
+      },
+      {
+        "subclass": ["hospital", "clinic"]
+      }
+    ]
   }
 }

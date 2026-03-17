@@ -39,6 +39,14 @@
       "gsi": ["waterway"]
     }
   },
+  "rivers": {
+    "description": "river features",
+    "layers": {
+      "protomaps": ["waterway"],
+      "osm": ["waterway"],
+      "gsi": ["waterway"]
+    }
+  },
   "inlandwater": {
     "description": "lakes, reservoirs, and ponds",
     "layers": {
@@ -48,6 +56,14 @@
     }
   },
   "coastline": {
+    "description": "coastal boundary between land and sea",
+    "layers": {
+      "protomaps": ["coastline"],
+      "osm": ["natural=coastline"],
+      "gsi": ["coastline"]
+    }
+  },
+  "coast": {
     "description": "coastal boundary between land and sea",
     "layers": {
       "protomaps": ["coastline"],
@@ -85,6 +101,22 @@
       "protomaps": ["pois"],
       "osm": ["amenity", "shop", "tourism"],
       "gsi": ["poi"]
+    }
+  },
+  "schools": {
+    "description": "school and university points of interest",
+    "layers": {
+      "protomaps": ["pois"],
+      "osm": ["amenity=school", "amenity=college", "amenity=university"],
+      "gsi": ["school"]
+    }
+  },
+  "hospitals": {
+    "description": "hospital and clinic points of interest",
+    "layers": {
+      "protomaps": ["pois"],
+      "osm": ["amenity=hospital", "amenity=clinic"],
+      "gsi": ["hospital"]
     }
   },
   "landuse": {

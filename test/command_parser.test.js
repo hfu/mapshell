@@ -42,3 +42,15 @@ test('normalizes mixed-case input before parsing', () => {
     raw: 'Show The Roads And Buildings'
   });
 });
+
+test('parses near as a spatial operator between two objects', () => {
+  assert.deepEqual(parseCommand('show hospitals near coast'), {
+    verb: 'show',
+    objects: ['hospitals'],
+    spatial: {
+      operator: 'near',
+      object: 'coast'
+    },
+    raw: 'show hospitals near coast'
+  });
+});
